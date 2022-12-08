@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\api\v1\AuthController;
+use App\Http\Controllers\api\v1\FileController;
 use App\Http\Controllers\api\v1\FolderController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +28,5 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('/auth/user', [AuthController::class, 'auth_user']);
 
     Route::apiResource('/folders', FolderController::class);
+    Route::apiResource('/files', FileController::class);
 });

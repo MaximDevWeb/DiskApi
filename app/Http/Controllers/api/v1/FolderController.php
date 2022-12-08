@@ -23,6 +23,7 @@ class FolderController extends Controller
 
         $folders = Folder::where('prefix', $prefix)
             ->where('type', 'folder')
+            ->orderBy('name', 'asc')
             ->get();
 
         return response()->json([
