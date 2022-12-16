@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\api\v1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Models\Folder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -16,11 +18,30 @@ class FileController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
-        //
+        $request->validate([
+            'folder' => 'string|nullable'
+        ]);
+
+        $folder = $request->input('folder');
+        $folder_id = null;
+
+        if ($folder) {
+            $folder = str_contains($folder, '/') ? $folder : '/' . $folder;
+            $folder_res = Folder::where(DB::raw('CONCAT(COALESCE(`prefix`, ""), "/", slug)'), $folder)->first();
+            $folder_id = $folder_res->id;
+        }
+
+        $files = File::where('folder_id', $folder_id)->get();
+
+        return response()->json([
+            'status' => 'success',
+            'files' => FileResource::collection($files),
+        ]);
     }
 
     /**
