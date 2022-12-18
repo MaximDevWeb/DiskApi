@@ -8,6 +8,7 @@ use App\Models\File;
 use App\Models\Folder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -88,22 +89,36 @@ class FileController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param File $file
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, File $file)
     {
-        //
+        $request->validate([
+            'name' => 'required|string'
+        ]);
+
+        $file->name = $request->name;
+        $file->save();
+
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
-     * @return \Illuminate\Http\Response
+     * @param File $file
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy(File $file)
     {
-        //
+        Storage::delete($file->link);
+        $file->delete();
+
+        return response()->json([
+            'status' => 'success',
+        ]);
     }
 }
