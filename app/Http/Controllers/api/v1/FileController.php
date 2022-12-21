@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use App\Events\FileCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FileResource;
 use App\Models\File;
@@ -11,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -79,6 +81,7 @@ class FileController extends Controller
         $file->link = $path;
         $file->save();
 
+        Event::dispatch(new FileCreated($file->id));
 
         return response()->json([
             'status' => 'success',

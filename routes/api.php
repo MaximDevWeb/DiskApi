@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\v1\AuthController;
 use App\Http\Controllers\api\v1\FileController;
 use App\Http\Controllers\api\v1\FolderController;
+use App\Http\Controllers\api\v1\LinkHashController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +30,6 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
     Route::apiResource('/folders', FolderController::class);
     Route::apiResource('/files', FileController::class);
+
+    Route::apiResource('/hash/generate', LinkHashController::class);
 });

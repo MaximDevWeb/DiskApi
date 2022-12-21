@@ -21,7 +21,8 @@ class FileResource extends JsonResource
             'name' => $this->name,
             'size' => $this->size,
             'type' => $this->type,
-            'link' => $this->link,
+            'private_link' => $this->private_link,
+            'public_link' => Storage::url($this->link),
             'created_at' => $this->created_at
         ];
     }
