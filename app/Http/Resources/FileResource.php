@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class FileResource extends JsonResource
 {
@@ -22,7 +21,7 @@ class FileResource extends JsonResource
             'size' => $this->size,
             'type' => $this->type,
             'private_link' => $this->private_link,
-            'public_link' => Storage::url($this->link),
+            'public_link' => $this->public_link,
             'created_at' => $this->created_at
         ];
     }

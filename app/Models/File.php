@@ -27,4 +27,13 @@ class File extends Model
     {
         return Attribute::get(fn() => action([LinkController::class, 'private'], ['hash' => $this->links->private_hash]));
     }
+
+    public function publicLink(): Attribute
+    {
+        return Attribute::get(
+            fn() => $this->links->public_hash
+                ? action([LinkController::class, 'public'], ['hash' => $this->links->public_hash])
+                : null
+        );
+    }
 }

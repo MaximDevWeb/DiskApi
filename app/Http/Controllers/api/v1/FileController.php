@@ -9,11 +9,9 @@ use App\Models\File;
 use App\Models\Folder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
@@ -122,6 +120,42 @@ class FileController extends Controller
 
         return response()->json([
             'status' => 'success',
+        ]);
+    }
+
+    /**
+     * Generate public file link
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function generatePublicLink(Request $request): JsonResponse
+    {
+        $file = File::find($request->id);
+        $file->links->public_hash = md5($file->id . time());
+        $file->push();
+
+        return response()->json([
+            'status' => 'success',
+            'file' => new FileResource($file)
+        ]);
+    }
+
+    /**
+     * Generate public file link
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function deletePublicLink(Request $request): JsonResponse
+    {
+        $file = File::find($request->id);
+        $file->links->public_hash = null;
+        $file->push();
+
+        return response()->json([
+            'status' => 'success',
+            'file' => new FileResource($file)
         ]);
     }
 }

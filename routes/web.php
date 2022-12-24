@@ -15,3 +15,4 @@
 */
 
 Route::get('/link/private/{hash}/{protect?}', [LinkController::class, 'private'])->middleware(['protect']);
+Route::get('/link/public/{hash}', [LinkController::class, 'public']);
