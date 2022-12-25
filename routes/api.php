@@ -22,6 +22,7 @@ Route::middleware('guest')->prefix('v1')->group(function () {
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/forgot', [AuthController::class, 'forgot']);
     Route::post('/auth/password', [AuthController::class, 'password']);
+    Route::post('/files/public-file', [FileController::class, 'getPublicFile']);
 });
 
 Route::middleware('auth:sanctum')->prefix('v1')->group(function () {

@@ -21,6 +21,7 @@ class FileResource extends JsonResource
             'size' => $this->size,
             'type' => $this->type,
             'private_link' => $this->private_link,
+            'public_hash' => $this->links->public_hash,
             'public_link' => $this->public_link,
             'created_at' => $this->created_at
         ];

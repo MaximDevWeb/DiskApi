@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use App\Models\Folder;
+use App\Models\Scopes\MyScope;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -152,6 +153,28 @@ class FileController extends Controller
         $file = File::find($request->id);
         $file->links->public_hash = null;
         $file->push();
+
+        return response()->json([
+            'status' => 'success',
+            'file' => new FileResource($file)
+        ]);
+    }
+
+    /**
+     * Get file by hash
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getPublicFile(Request $request): JsonResponse
+    {
+        $hash = $request->input('hash');
+
+        $file = File::withoutGlobalScope(MyScope::class)
+            ->whereHas('links', function ($query) use ($hash) {
+                $query->where('public_hash', $hash);
+            })
+            ->first();
 
         return response()->json([
             'status' => 'success',
