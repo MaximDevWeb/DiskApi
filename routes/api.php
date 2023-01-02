@@ -34,5 +34,7 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::post('/files/generate-public-link', [FileController::class, 'generatePublicLink']);
     Route::post('/files/delete-public-link', [FileController::class, 'deletePublicLink']);
 
+    Route::get('/statistic', [FileController::class, 'getStatisticFiles']);
+
     Route::apiResource('/hash/generate', LinkHashController::class);
 });

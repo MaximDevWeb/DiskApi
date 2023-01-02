@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\v1;
 use App\Events\FileCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FileResource;
+use App\Http\Resources\StatisticResource;
 use App\Models\File;
 use App\Models\Folder;
 use App\Models\Scopes\MyScope;
@@ -179,6 +180,39 @@ class FileController extends Controller
         return response()->json([
             'status' => 'success',
             'file' => new FileResource($file)
+        ]);
+    }
+
+    /**
+     * Get statistic user files
+     */
+    public function getStatisticFiles(Request $request): JsonResponse
+    {
+        $files = File::all();
+
+        $statistic['disk'] = (int)env('APP_DISK');
+        $statistic['use'] = 0;
+        $statistic['useImages'] = 0;
+        $statistic['useDocuments'] = 0;
+        $statistic['useOther'] = 0;
+
+        foreach ($files as $file) {
+            $statistic['use'] += $file->size;
+
+            if (in_array($file->type, File::$images)) {
+                $statistic['useImages'] += $file->size;
+            } elseif (in_array($file->type, File::$documents)) {
+                $statistic['useDocuments'] += $file->size;
+            } else {
+                $statistic['useOther'] += $file->size;
+            }
+        }
+
+        $statistic['free'] = $statistic['disk'] - $statistic['use'];
+
+        return response()->json([
+            'status' => 'success',
+            'statistic' => $statistic
         ]);
     }
 }

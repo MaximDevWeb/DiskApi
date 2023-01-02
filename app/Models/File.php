@@ -13,6 +13,10 @@ class File extends Model
 {
     use HasFactory;
 
+    public static array $images = ["jpeg", "jpg", "png", "svg", "webp", "bmp", "tiff", "raw", "ai", "eps", "ps", "psd", "fig"];
+    public static array $documents = ["doc", "docx", "pdf", "xls", "xlsx", "txt", "rtf", "odt", "ods"];
+    public static array $archives = ["zip", "zipx", "rar", "tar", 'tar.gz', 'gz'];
+
     protected static function booted()
     {
         static::addGlobalScope(new MyScope());
