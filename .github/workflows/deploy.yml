@@ -1,0 +1,74 @@
+name: Laravel Deploy
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+  workflow_dispatch:
+
+jobs:
+  laravel-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: load repository files
+        uses: actions/checkout@v3
+
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Copy .env.example to .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Generate encryption key
+        run: php artisan key:generate
+
+      - name: run laravel test
+        run: php artisan test
+
+  laravel-deploy:
+    needs: [laravel-test]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: load repository files
+        uses: actions/checkout@v3
+
+      - name: Install composer dependencies
+        run: composer install
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: "${{ secrets.SSH_KEY }}"
+          known_hosts: "just-a-placeholder-so-we-dont-get-errors"
+
+      - name: Generate auth hosts
+        run: ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deployment
+        run: rsync -acp --delete
+          --exclude '.git/'
+          --exclude '.github/'
+          --exclude 'tests/'
+          --exclude '.gitignore'
+          --exclude 'composer.lock'
+          --exclude 'composer.json'
+          --exclude 'phpunit.xml.dist'
+          --exclude 'package.json'
+          --exclude 'phpunit.xml.dist'
+          --exclude '.gitattributes'
+          --exclude '.env.example'
+          --exclude '.env'
+          --exclude '.htaccess'
+          --exclude '.editorconfig'
+          --exclude 'README.md'
+          --exclude 'vite.config.js'
+          . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/a0761558/domains/maxim-dev.ru/public_html/disk-api/
+
+      - name: Generate cache
+        run: ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}
+          "cd domains/maxim-dev.ru/public_html/nal-backend;
+          /usr/local/bin/php81 artisan config:cache;
+          /usr/local/bin/php81 artisan route:cache;
+          exit;"
