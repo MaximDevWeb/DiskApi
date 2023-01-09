@@ -56,7 +56,6 @@ jobs:
           --exclude 'composer.json'
           --exclude 'phpunit.xml.dist'
           --exclude 'package.json'
-          --exclude 'phpunit.xml.dist'
           --exclude '.gitattributes'
           --exclude '.env.example'
           --exclude '.env'
